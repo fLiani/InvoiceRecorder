@@ -1,8 +1,13 @@
+import javax.sound.midi.Soundbank;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.SQLException;
+
 
 public class Gui implements ActionListener
 {
@@ -15,9 +20,11 @@ public class Gui implements ActionListener
     private JButton createDbButton;
     private JButton loadDbButton;
     private File[] invoices;
+    private DatabaseManager dbManager;
 
     public Gui()
     {
+        dbManager = new DatabaseManager();
         frame = new JFrame();
         panel = new JPanel();
 
@@ -57,11 +64,51 @@ public class Gui implements ActionListener
         {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setMultiSelectionEnabled(true);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel Files", "xls");
+            fileChooser.addChoosableFileFilter(filter);
 
             int option = fileChooser.showOpenDialog(frame);
             if(option == JFileChooser.APPROVE_OPTION)
             {
                 invoices = fileChooser.getSelectedFiles();
+            }
+            System.out.println("Done Reading");
+        }
+
+        if(e.getSource() == executeButton)
+        {
+            JFileChooser chooser = new JFileChooser();
+
+
+            ExcelReader reader = new ExcelReader();
+            Person p = reader.readFile(invoices[0]);
+
+            for(File f : invoices)
+            {
+                try
+                {
+                    dbManager.fillTable(reader.readFile(f));
+                }
+                catch (SQLException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+            ExcelFileBuilder excelFileBuilder = new ExcelFileBuilder();
+            excelFileBuilder.createExcelFile("/Users/fabry/Documents/GitHub/InvoiceRecorder/SalesRecord.db",
+                    "/Users/fabry/Desktop/excelfile.xls", panel);
+        }
+
+        if(e.getSource() == createDbButton)
+        {
+            dbManager.createDatabase();
+            try
+            {
+                dbManager.createQuarter("1");
+            } catch (SQLException ex)
+            {
+                throw new RuntimeException(ex);
             }
         }
     }
