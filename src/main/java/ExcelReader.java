@@ -1,10 +1,5 @@
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -18,7 +13,8 @@ public class ExcelReader
 
     }
 
-    public Person readFile(File file) {
+    public Person readFile(File file)
+    {
         try (Workbook workbook = WorkbookFactory.create(file))
         {
             Row rowTotal = workbook.getSheetAt(0).getRow(36);
