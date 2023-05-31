@@ -44,7 +44,6 @@ public class DatabaseManager
     {
         try
         {
-//            System.out.println(p.getInvNo());
             c = DriverManager.getConnection("jdbc:sqlite:SalesRecord.db");
             stmt = c.createStatement();
             String nm = p.getNameDetails().replace(",", "").replace("'","");
@@ -52,12 +51,16 @@ public class DatabaseManager
                     + "', " + p.getAmount() + ", " + p.getTotal() + ", " + p.getVat() + ", " + p.getNet() + ")";
 
             stmt.executeUpdate(sql);
+            if(p.getAmount() == 0)
+            {
+                System.out.println(p.getInvNo() + " = 0 VALUE");
+            }
         }
         catch(SQLException e)
         {
             if(e.getErrorCode() == 19)
             {
-                System.out.println("Duplicate");
+                System.out.println(p.getInvNo() + " Duplicate");
             }
         }
     }
