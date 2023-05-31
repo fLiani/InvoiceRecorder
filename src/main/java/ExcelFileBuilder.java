@@ -8,22 +8,27 @@ import java.sql.*;
 
 public class ExcelFileBuilder
 {
+    private JFileChooser databaseChooser;
+    private File dbFile = null;
+    private int option;
     public ExcelFileBuilder()
     {
 
     }
     public void createExcelFile(String dbFilePath, String excelFilePath, JPanel panel)
     {
-        JFileChooser chooser = new JFileChooser();
-        int option = chooser.showOpenDialog(panel);
-        File file = null;
+        databaseChooser = new JFileChooser();
+
+        option = databaseChooser.showOpenDialog(panel);
+
         if (option == JFileChooser.APPROVE_OPTION)
         {
-            file = chooser.getSelectedFile();
+            dbFile = databaseChooser.getSelectedFile();
         }
-        try {
-            assert file != null;
-            try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
+        try
+        {
+            assert dbFile != null;
+            try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
                      Statement stmt = conn.createStatement();
                      ResultSet resultSet = stmt.executeQuery("SELECT * FROM Quarter")) {
 
@@ -51,22 +56,23 @@ public class ExcelFileBuilder
                 }
 
                 JFileChooser saveAs = new JFileChooser();
-                int saveOption = chooser.showSaveDialog(panel);
+                int saveOption = databaseChooser.showSaveDialog(panel);
                 File saveFile = null;
                 if (option == JFileChooser.APPROVE_OPTION)
                 {
-                    saveFile = chooser.getSelectedFile();
+                    saveFile = databaseChooser.getSelectedFile();
                 }
-                // Write the workbook to the Excel file
                 try (FileOutputStream outputStream = new FileOutputStream(saveFile)) {
                     workbook.write(outputStream);
                 }
                 System.out.println("Excel file created successfully!");
 
             }
-        } catch (SQLException e) {
+        } catch (SQLException e)
+        {
             e.printStackTrace();
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
     }

@@ -2,8 +2,8 @@ import java.sql.*;
 
 public class DatabaseManager
 {
-    Connection c = null;
-    Statement stmt;
+    private Connection c = null;
+    private Statement stmt;
     public DatabaseManager()
     {
 
@@ -11,11 +11,12 @@ public class DatabaseManager
 
     public void createDatabase()
     {
-
-        try {
+        try
+        {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:SalesRecord.db");
-        } catch ( Exception e ) {
+        } catch ( Exception e )
+        {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
             System.exit(0);
         }
